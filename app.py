@@ -50,7 +50,7 @@ import requests
 from io import BytesIO
 
 def load_bg_image():
-    url = "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?q=80&w=1920&auto=format&fit=crop"
+    url = "https://images.unsplash.com/photo-1586015555751-63bb77f4322a?q=80&w=1920&auto=format&fit=crop"
     try:
         resp = requests.get(url, timeout=15)
         resp.raise_for_status()
@@ -101,7 +101,7 @@ st.markdown(f"""
     
     /* تحويل البطاقات إلى نمط زجاجي شفاف */
     .drug-card, .analysis-card, .top-header {{
-        background: rgba(15, 23, 42, 0.75) !important;
+        background: rgba(15, 23, 42, 0.85) !important;
         backdrop-filter: blur(12px) saturate(140%);
         -webkit-backdrop-filter: blur(12px) saturate(140%);
         border: 1px solid rgba(255, 255, 255, 0.12) !important;
