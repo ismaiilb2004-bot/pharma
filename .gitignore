@@ -1,0 +1,25 @@
+# --- الملفات السرية (لا تُرفع أبداً إلى GitHub) ---
+.streamlit/secrets.toml
+
+# --- ملفات Python المؤقتة ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- ملفات التنظيف والتحويل (ليست للرصد) ---
+clean_data.py
+convert_phar.py
+
+# --- ملفات كبيرة / وسيطة ---
+phar1.csv
+*.xlsx
+*.xls
+*.pdf
+
+# --- مجلدات الإخراج ---
+output/
+
+# --- الملفات المحلية ---
+.env
+.DS_Store
