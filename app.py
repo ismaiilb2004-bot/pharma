@@ -44,41 +44,88 @@ def load_data():
 
 df = load_data()
 
-st.markdown("""
+# 1. تحميل صورة الخلفية (رابط مباشر لصورة صيدلية عالية الجودة من Unsplash)
+import base64
+import requests
+from io import BytesIO
+
+def load_bg_image():
+    url = "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?q=80&w=1920&auto=format&fit=crop"
+    try:
+        resp = requests.get(url, timeout=15)
+        resp.raise_for_status()
+        return base64.b64encode(resp.content).decode()
+    except Exception:
+        # صورة خلفية احتياطية (تدرج أزرق داكن) إذا فشل تحميل الصورة
+        return None
+
+bg_b64 = load_bg_image()
+
+# 2. إضافة تأثير CSS الزجاجي Glassmorphism
+if bg_b64:
+    bg_style = f"""
+    .stApp {{
+        background-image: url("data:image/jpeg;base64,{bg_b64}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-attachment: fixed;
+    }}
+    .stApp::before {{
+        content: "";
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(15, 23, 42, 0.35);
+        backdrop-filter: blur(8px) saturate(120%);
+        -webkit-backdrop-filter: blur(8px) saturate(120%);
+        z-index: 0;
+    }}
+    .stApp > div:first-child {{ position: relative; z-index: 1; }}
+    """
+else:
+    bg_style = """
+    .stApp {
+        background: linear-gradient(135deg, #0b1329 0%, #101f42 100%);
+        color: #f1f5f9;
+    }
+    """
+
+st.markdown(f"""
 <style>
-    .main {
+    {bg_style}
+
+    .main {{
         direction: rtl;
         text-align: right;
-    }
+    }}
     
-    .top-header {
-        background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
-        padding: 12px 25px;
-        border-radius: 10px;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-    .top-header h2 { margin: 0; color: white; font-size: 1.6rem; }
-    .top-header p { margin: 0; opacity: 0.8; font-size: 0.9rem; }
+    /* تحويل البطاقات إلى نمط زجاجي شفاف */
+    .drug-card, .analysis-card, .top-header {{
+        background: rgba(15, 23, 42, 0.75) !important;
+        backdrop-filter: blur(12px) saturate(140%);
+        -webkit-backdrop-filter: blur(12px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+    }}
 
-    .drug-card {
-        background-color: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 12px;
-        padding: 20px;
+    .top-header {{
+        background: linear-gradient(90deg, rgba(30, 60, 114, 0.85) 0%, rgba(42, 82, 152, 0.85) 100%) !important;
+    }}
+
+    .drug-card {{
         margin-top: 10px;
-    }
-    .drug-title {
+    }}
+
+    .drug-title {{
         color: #38bdf8;
         font-size: 1.8rem;
         font-weight: bold;
         margin-bottom: 5px;
-    }
-    .dci-badge {
-        background-color: #0f172a;
+    }}
+
+    .dci-badge {{
+        background-color: rgba(15, 23, 42, 0.85);
         color: #34d399;
         padding: 6px 12px;
         border-radius: 6px;
@@ -86,23 +133,38 @@ st.markdown("""
         display: inline-block;
         margin-bottom: 15px;
         border: 1px solid #059669;
-    }
-    .price-box {
-        background-color: #064e3b;
+    }}
+
+    .price-box {{
+        background-color: rgba(6, 78, 59, 0.85) !important;
         color: #6ee7b7;
         padding: 15px;
         border-radius: 10px;
         text-align: center;
         font-size: 1.5rem;
         font-weight: bold;
-    }
-    .analysis-card {
-        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(110, 231, 183, 0.3);
+    }}
+
+    .analysis-card {{
         border-right: 5px solid #10b981;
-        border-radius: 12px;
-        padding: 20px;
-        margin-top: 15px;
-    }
+    }}
+
+    /* جعل جميع النصوص واضحة ومقروءة فوق الزجاج */
+    .stMarkdown, .stText, .stHeader, h1, h2, h3, h4, p, label, .stRadio label, .stButton > button {{
+        color: #f1f5f9 !important;
+    }}
+
+    /* خلفية شفافة للعناصر التفاعلية */
+    .stTextInput input, .stSelectbox div[data-baseweb="select"] > div, .stFileUploader, .stRadio {{
+        background-color: rgba(15, 23, 42, 0.6) !important;
+        color: #f1f5f9 !important;
+        border-radius: 8px !important;
+    }}
+
+    .stTextInput label, .stSelectbox label, .stFileUploader label {{
+        color: #f1f5f9 !important;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
