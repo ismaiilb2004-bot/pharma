@@ -98,9 +98,14 @@ st.markdown(f"""
         direction: rtl;
         text-align: right;
     }}
+
+    /* ترتيب الأعمدة لغة عربية: البحث يمين، التفاصيل يسار */
+    [data-testid="stHorizontalBlock"] {{
+        flex-direction: row-reverse;
+    }}
     
-    /* تحويل البطاقات إلى نمط زجاجي شفاف */
-    .drug-card, .analysis-card, .top-header {{
+    /* البطاقات حسب النمط الزجاجي الشفاف الداكن */
+    .drug-card, .analysis-card {{
         background: rgba(15, 23, 42, 0.85) !important;
         backdrop-filter: blur(12px) saturate(140%);
         -webkit-backdrop-filter: blur(12px) saturate(140%);
@@ -109,8 +114,62 @@ st.markdown(f"""
         box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
     }}
 
+    /* حاوية البحث السريع بنمط زجاجي داكن */
+    [data-testid="stVerticalBlockBorderWrapper"] {{
+        background: rgba(15, 23, 42, 0.85) !important;
+        backdrop-filter: blur(12px) saturate(140%);
+        -webkit-backdrop-filter: blur(12px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 16px !important;
+        padding: 20px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+    }}
+
+    /* الهيدر: نص أنيق بظل خفيف بدون خلفية ملونة */
     .top-header {{
-        background: linear-gradient(90deg, rgba(30, 60, 114, 0.85) 0%, rgba(42, 82, 152, 0.85) 100%) !important;
+        text-align: center !important;
+        padding: 25px 20px;
+        margin-bottom: 10px;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }}
+    .top-header h2 {{
+        font-size: 2.2rem !important;
+        font-weight: 800 !important;
+        color: #ffffff !important;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
+        margin: 0 !important;
+    }}
+    .top-header p {{
+        font-size: 1rem !important;
+        color: #cbd5e1 !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+        margin: 6px 0 0 0 !important;
+    }}
+
+    /* مسافات وتباعد مناسب حول التبويبات */
+    .stTabs {{
+        margin-top: 20px;
+    }}
+    .stTabs [data-baseweb="tab-list"] {{
+        gap: 12px;
+        padding: 8px 16px;
+        margin-bottom: 24px;
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }}
+    .stTabs [data-baseweb="tab"] {{
+        height: 46px;
+        border-radius: 10px;
+        padding: 0px 22px;
+        font-weight: 700;
+        color: #cbd5e1;
+    }}
+    .stTabs [aria-selected="true"] {{
+        background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%) !important;
+        color: #ffffff !important;
     }}
 
     .drug-card {{
@@ -183,20 +242,21 @@ with tab1:
     c1, c2 = st.columns([1, 2])
     
     with c1:
-        st.subheader("مركز البحث السريع")
-        search_type = st.radio("البحث بواسطة:", ["الاسم التجاري", "المادة الفعالة (DCI)"], horizontal=True)
-        
-        if search_type == "الاسم التجاري":
-            drug_list = sorted(df["Nom_Commercial"].unique().tolist())
-            selected_drug = st.selectbox("اختر أو اكتب اسم الدواء:", drug_list)
-            selected_data = df[df["Nom_Commercial"] == selected_drug].iloc[0]
-        else:
-            dci_list = sorted(df["DCI"].unique().tolist())
-            selected_drug = st.selectbox("اختر أو اكتب المادة الفعالة:", dci_list)
-            selected_data = df[df["DCI"] == selected_drug].iloc[0]
-        
-        st.write("")
-        ai_btn = st.button("✨ تشغيل التحليل بالذكاء الاصطناعي", use_container_width=True, type="primary")
+        with st.container(border=True):
+            st.subheader("مركز البحث السريع")
+            search_type = st.radio("البحث بواسطة:", ["الاسم التجاري", "المادة الفعالة (DCI)"], horizontal=True)
+            
+            if search_type == "الاسم التجاري":
+                drug_list = sorted(df["Nom_Commercial"].unique().tolist())
+                selected_drug = st.selectbox("اختر أو اكتب اسم الدواء:", drug_list, key="ddl_nom")
+                selected_data = df[df["Nom_Commercial"] == selected_drug].iloc[0]
+            else:
+                dci_list = sorted(df["DCI"].unique().tolist())
+                selected_drug = st.selectbox("اختر أو اكتب المادة الفعالة:", dci_list, key="ddl_dci")
+                selected_data = df[df["DCI"] == selected_drug].iloc[0]
+            
+            st.write("")
+            ai_btn = st.button("✨ تشغيل التحليل بالذكاء الاصطناعي", use_container_width=True, type="primary")
 
     with c2:
         st.subheader("تفاصيل الدواء المحدد")
